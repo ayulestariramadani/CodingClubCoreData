@@ -12,21 +12,23 @@ struct ContentView: View {
     @Environment(\.managedObjectContext) private var viewContext
     
     @FetchRequest(
-        sortDescriptors: [NSSortDescriptor(keyPath: \Item.timestamp, ascending: true)],
+        sortDescriptors: [NSSortDescriptor(keyPath: \Member.name, ascending: true)],
         animation: .default)
-    private var items: FetchedResults<Item>
+    private var members: FetchedResults<Member>
     
     var body: some View {
         NavigationStack {
             List {
-                ForEach(items) { item in
+                ForEach(members) { member in
                     NavigationLink {
-                        DetailMemberView()
+                        // 2.4 Add parameter
+                        DetailMemberView(member: member)
                     } label: {
-                        Text("Go To Detail Member View")
+                        //1.4. Edit label for list
+                        Text("\(member.name!)")
                     }
                 }
-//                .onDelete()
+                .onDelete(perform: deleteItems)
             }
             .toolbar {
                 ToolbarItem {
@@ -43,6 +45,23 @@ struct ContentView: View {
     }
 }
 
+// 4.1 add delete function
+extension ContentView{
+    private func deleteItems(offsets: IndexSet) {
+        withAnimation {
+            offsets.map { members[$0] }.forEach(viewContext.delete)
+
+            do {
+                try viewContext.save()
+            } catch {
+                // Replace this implementation with code to handle the error appropriately.
+                // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                let nsError = error as NSError
+                fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+            }
+        }
+    }
+}
     
 
 struct ContentView_Previews: PreviewProvider {

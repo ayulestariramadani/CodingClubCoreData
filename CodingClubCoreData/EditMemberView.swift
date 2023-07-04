@@ -9,6 +9,9 @@ import SwiftUI
 
 struct EditMemberView: View {
     @Environment(\.presentationMode) var presentationMode
+    //3.1. add environment variable from persistance and object
+    @Environment(\.managedObjectContext) var viewContext
+    let member: Member
     
     @State private var name: String = ""
     @State private var selectedDate = Date()
@@ -22,6 +25,12 @@ struct EditMemberView: View {
     @State private var inputImage: UIImage?
     @State private var image: Image?
     @State private var showingImagePicker = false
+    
+    //3.4 initialize for null string
+    private var hasInvalidData: Bool {
+        return member.name!.isBlank || (member.name == name && member.birth == selectedDate && member.gender == (selectedGender != 0) && member.role == selectedRole)
+    }
+
     
     var body: some View {
         NavigationView {
@@ -72,14 +81,15 @@ struct EditMemberView: View {
                 }
                 
                 // Section Button
-                Section {
-                    Button {
-                        presentationMode.wrappedValue.dismiss()
-                    } label: {
-                        Text("Save")
-                    }
-                    .disabled(name.isBlank)
-                }
+                // 3.3 remove section button
+//                Section {
+//                    Button {
+//                        presentationMode.wrappedValue.dismiss()
+//                    } label: {
+//                        Text("Save")
+//                    }
+//                    .disabled(name.isBlank)
+//                }
                 
                 
             }
@@ -88,6 +98,52 @@ struct EditMemberView: View {
             }
             .navigationTitle("Edit Member Details")
             .navigationBarTitleDisplayMode(.inline)
+            // 3.5 add toolbar
+            .toolbar {
+              ToolbarItem(placement: .navigationBarTrailing) {
+                Button {
+                  viewContext.performAndWait {
+                      member.name = name
+                      member.birth = selectedDate
+                      member.role = Int16(selectedRole)
+                      member.gender = (selectedGender != 0)
+                      if inputImage != nil{
+                          let imageData = inputImage?.jpegData(compressionQuality: 0.8)
+                          member.image = imageData
+                      }
+                      
+                      do {
+                          try viewContext.save()
+                      } catch {
+                          // Replace this implementation with code to handle the error appropriately.
+                          // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+                          let nsError = error as NSError
+                          fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+                      }
+                    presentationMode.wrappedValue.dismiss()
+                  }
+                } label: {
+                  Text("Save")
+                }
+                .disabled(hasInvalidData)
+              }
+              ToolbarItem(placement: .navigationBarLeading) {
+                Button {
+                  presentationMode.wrappedValue.dismiss()
+                } label: {
+                  Text("Cancel")
+                }
+              }
+            }
+        }
+        //3.2 assign data from core data to the variable
+        .onAppear(){
+            name = member.name!
+            selectedDate = member.birth!
+            selectedRole = Int(member.role)
+            selectedGender = member.gender ? 1 : 0
+
+            
         }
     }
 }
@@ -100,8 +156,9 @@ extension EditMemberView{
     }
 }
 
-struct EditMemberView_Previews: PreviewProvider {
-    static var previews: some View {
-        EditMemberView()
-    }
-}
+// 3.2 Remove preview dari pada ribet
+//struct EditMemberView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        EditMemberView()
+//    }
+//}

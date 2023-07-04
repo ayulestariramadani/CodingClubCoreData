@@ -10,6 +10,9 @@ import SwiftUI
 struct AddMemberView: View {
     @Environment(\.presentationMode) var presentationMode
     
+    //1.1. add environment variable from persistance
+    @Environment(\.managedObjectContext) var viewContext
+    
     @State private var name: String = ""
     @State private var selectedDate = Date()
     
@@ -74,6 +77,8 @@ struct AddMemberView: View {
                 // Section Button
                 Section {
                     Button {
+                        // 1.3. Call addItem Function
+                        addItem()
                         presentationMode.wrappedValue.dismiss()
                     } label: {
                         Text("Save")
@@ -97,6 +102,26 @@ extension AddMemberView{
     private func loadImage() {
       guard let inputImage = inputImage else { return }
       image = Image(uiImage: inputImage)
+    }
+    
+    //1.2. Add function for add new data
+    private func addItem() {
+        let newMember = Member(context: viewContext)
+        newMember.name = name
+        newMember.birth = selectedDate
+        newMember.role = Int16(selectedRole)
+        newMember.gender = (selectedGender != 0)
+        let imageData = inputImage?.jpegData(compressionQuality: 0.8)
+        newMember.image = imageData
+
+        do {
+            try viewContext.save()
+        } catch {
+            // Replace this implementation with code to handle the error appropriately.
+            // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
+            let nsError = error as NSError
+            fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
+        }
     }
 }
 

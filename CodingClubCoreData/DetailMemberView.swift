@@ -8,32 +8,38 @@
 import SwiftUI
 
 struct DetailMemberView: View {
-    @State private var selectedOptionIndex = 0
-    private let options = [false, true]
     @State private var showEditSheet = false
     
-    let birthDate = Date()
+    // 2.1 Add observedobject for crawl data from coredata and array role for show role data
+    @ObservedObject var member: Member
+    private let role = ["Designer", "Coder", "Domain"]
 
     var body: some View {
         List{
             Section{
                 VStack(alignment: .leading, spacing: 4){
-                    Text("Name : ")
+                    // 2.2 add object that we want to call
+                    Text("Name : \(member.name!)")
                       .font(.headline)
-                    Text("Age : \(age(from: birthDate))")
+                    Text("Age : \(age(from: member.birth!))")
                       .font(.headline)
-                    Text("Gender : ")
+                    Text("Gender : \(getString(from: member.gender))")
                         .font(.headline)
-                    Text("Role :")
+                    Text("Role : \(role[Int(member.role)])")
                       .font(.headline)
                     Text("Avatar :")
                       .font(.headline)
+                    if let imageData = member.image, let image = UIImage(data: imageData) {
+                      Image(uiImage: image)
+                        .resizable()
+                        .scaledToFit()
+                    }
                       
                 }
             }
         }
         .sheet(isPresented: $showEditSheet, content: {
-          EditMemberView()
+          EditMemberView(member: member)
         })
         .toolbar {
             ToolbarItem(placement: .navigationBarTrailing) {
@@ -45,6 +51,10 @@ struct DetailMemberView: View {
             }
         }
     }
+    // Function for change bool to string
+    func getString(from value: Bool) -> String {
+            return value ? "Male" : "Female"
+        }
     
     func age(from date: Date) -> String {
         let calendar = Calendar.current
@@ -58,8 +68,9 @@ struct DetailMemberView: View {
     }
 }
 
-struct DetailMemberView_Previews: PreviewProvider {
-    static var previews: some View {
-        DetailMemberView()
-    }
-}
+// 2.3 Remove preview (Soalnya ribet :))
+//struct DetailMemberView_Previews: PreviewProvider {
+//    static var previews: some View {
+//        DetailMemberView()
+//    }
+//}
