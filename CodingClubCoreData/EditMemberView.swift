@@ -10,6 +10,8 @@ import SwiftUI
 struct EditMemberView: View {
     @Environment(\.presentationMode) var presentationMode
     
+    //3.1. add environment variable from persistance and object
+    
     @State private var name: String = ""
     @State private var selectedDate = Date()
     
@@ -22,6 +24,8 @@ struct EditMemberView: View {
     @State private var inputImage: UIImage?
     @State private var image: Image?
     @State private var showingImagePicker = false
+    
+    //3.4 initialize if nothing data has changed
     
     var body: some View {
         NavigationView {
@@ -72,6 +76,7 @@ struct EditMemberView: View {
                 }
                 
                 // Section Button
+                // 3.3 remove section button
                 Section {
                     Button {
                         presentationMode.wrappedValue.dismiss()
@@ -88,6 +93,7 @@ struct EditMemberView: View {
             }
             .navigationTitle("Edit Member Details")
             .navigationBarTitleDisplayMode(.inline)
+            // 3.5 add toolbar
         }
     }
 }

@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct DetailMemberView: View {
-    @State private var selectedOptionIndex = 0
-    private let options = [false, true]
     @State private var showEditSheet = false
+    
+    // 2.1 Add observedobject for crawl data from coredata and array role for show role data
     
     let birthDate = Date()
 
@@ -18,6 +18,7 @@ struct DetailMemberView: View {
         List{
             Section{
                 VStack(alignment: .leading, spacing: 4){
+                    // 2.2 add object that we want to call
                     Text("Name : ")
                       .font(.headline)
                     Text("Age : \(age(from: birthDate))")

@@ -21,11 +21,14 @@ struct ContentView: View {
             List {
                 ForEach(items) { item in
                     NavigationLink {
+                        // 2.4 Add parameter
                         DetailMemberView()
                     } label: {
+                        //2.5. Edit label for list
                         Text("Go To Detail Member View")
                     }
                 }
+                //4.2 call delete function
 //                .onDelete()
             }
             .toolbar {
@@ -44,6 +47,7 @@ struct ContentView: View {
 }
 
     
+// 4.1 add delete function
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AddMemberView: View {
     @Environment(\.presentationMode) var presentationMode
+    //1.1. add environment variable persistance
     
     @State private var name: String = ""
     @State private var selectedDate = Date()
@@ -74,6 +75,8 @@ struct AddMemberView: View {
                 // Section Button
                 Section {
                     Button {
+                        // 1.3. Call addItem Function
+                        
                         presentationMode.wrappedValue.dismiss()
                     } label: {
                         Text("Save")
@@ -98,6 +101,8 @@ extension AddMemberView{
       guard let inputImage = inputImage else { return }
       image = Image(uiImage: inputImage)
     }
+    //1.2. Add function for add new data
+    
 }
 
 struct AddMemberView_Previews: PreviewProvider {
